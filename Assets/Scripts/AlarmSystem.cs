@@ -10,38 +10,38 @@ public class AlarmSystem : MonoBehaviour
     private void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
+        _audioSource.volume = 0.1F;
     }
 
     private void OnCollisionEnter2D(Collision2D collision2D)
     {
-        var alarmOn = StartCoroutine(AlarmSystemOn());
-    }
-
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        var alarmOff = StartCoroutine(AlarmSystemOff());
-    }
-
-    private IEnumerator AlarmSystemOn()
-    {
-        _audioSource.volume = 0.1F;
         _audioSource.Play();
-        for (int i = 0; i < 5; i++)
-        {
-            _audioSource.volume += 0.05F ;
-            yield return new WaitForSeconds(1F);
-        }
     }
-    
-    private IEnumerator AlarmSystemOff()
+
+    private void OnCollisionStay2D(Collision2D collision2D)
     {
-        for (int i = 0; i < 10; i++)
+        if (_audioSource.volume != 1)
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, 1, 0.01F);
+    }
+
+    private void OnCollisionExit2D(Collision2D collision2D)
+    {
+        var off = StartCoroutine(SoundAttenuation());
+
+    }
+    private IEnumerator SoundAttenuation()
+    {
+        var waitForFixedUpdate = new WaitForFixedUpdate();
+        while (_audioSource.volume > 0)
         {
-            _audioSource.volume -= 0.05F ;
-            yield return new WaitForSeconds(0.5F);
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume,0, 0.02F);
+            yield return waitForFixedUpdate;
         }
         _audioSource.Stop();
     }
+
     
-    
+
+
+
 }
