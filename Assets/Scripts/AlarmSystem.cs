@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
+
 public class AlarmSystem : MonoBehaviour
 {
     private AudioSource _audioSource;
@@ -29,6 +31,7 @@ public class AlarmSystem : MonoBehaviour
         var off = StartCoroutine(SoundAttenuation());
 
     }
+    
     private IEnumerator SoundAttenuation()
     {
         var waitForFixedUpdate = new WaitForFixedUpdate();
@@ -39,9 +42,4 @@ public class AlarmSystem : MonoBehaviour
         }
         _audioSource.Stop();
     }
-
-    
-
-
-
 }
